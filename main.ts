@@ -42,11 +42,11 @@ async function handleRequest(request: Request): Promise<Response> {
   const kinds = params.get("kinds")?.split(",").map(Number) || [1, 30023];
   const whitelist = params.get("whitelist")?.split(",") || [];
   const replies = !(params.get("replies") === "false");
-  console.log(params);
+  //console.log(params);
   //console.log(params.get("pathname"))
-  // console.log(kinds)
-  //console.log(userPubkeys)
-  //console.log(whitelist)
+  console.log(kinds);
+  console.log(userPubkeys);
+  console.log(whitelist);
 
   // Create Nostr filter
   const filter: nostr.Filter = {
@@ -71,7 +71,12 @@ async function fetchNostrEvents(
   replies: boolean,
 ): Promise<nostr.Event[]> {
   const pool = new nostr.SimplePool();
-  const relays = ["wss://nostr.mom", "wss://nos.lol", "wss://nostr.wine"];
+  const relays = [
+    "wss://nostr.mom",
+    "wss://nos.lol",
+    "wss://nostr.wine",
+    "wss://relay.mostr.pub",
+  ];
   let events = [];
   const sub = pool.subscribeMany(relays, [filter], {
     onevent(event) {
@@ -105,7 +110,7 @@ async function fetchNostrEvents(
     },
   });
 
-  await new Promise((resolve) => setTimeout(resolve, 5000));
+  await new Promise((resolve) => setTimeout(resolve, 15000));
   return events;
 }
 
@@ -116,7 +121,8 @@ function createAtomFeed(events: nostr.Event[]): Feed {
     id: "github.com/gustavonmartins/nostr-to-rss",
     link: "github.com/gustavonmartins/nostr-to-rss",
     updated: new Date(),
-    copyright: "github.com/gustavonmartins/nostr-to-rss",
+    copyright:
+      "https://njump.me/npub1auwq2edy2tahk58uepwyvjjmdvkxdvmrv492xts8m2s030gla0msruxp7s",
   });
 
   function resumeString(inputString: string): string {
