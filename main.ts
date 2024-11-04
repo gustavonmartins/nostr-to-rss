@@ -29,7 +29,7 @@ async function handleRequest(request: Request): Promise<Response> {
   const params = url.searchParams;
   if (path !== "/feed") {
     return new Response(
-      "Please, use the /feed route. Options are /feed?users=npub1,npub2,&kinds=kind1,kind2&replies=true\n users is the list of npubs to follow, kinds are the nostr kinds to subscribe (usually 1 and 30023), and replies (true or false) is to indicate if replies are to be shown or not",
+      "Please, use the /feed route. \nExample: https://nostr-to-rss.deno.dev/feed?users=npub1auwq2edy2tahk58uepwyvjjmdvkxdvmrv492xts8m2s030gla0msruxp7s,npub1wqxxe0cjaxnvmrv4lkvx8d5dlft7ewswyn09w5v7fg7642fgzm7srucxws&kinds=1,30023&replies=true&whitelist=art,food,cooking,painting\n users is the list of npubs to follow, \nkinds are the nostr kinds to subscribe (usually 1 and 30023), and \nreplies (true or false) is to indicate if replies are to be shown or not\n\n made by https://njump.me/nprofile1qydhwumn8ghj7emvv4shxmmwv96x7u3wv3jhvtmjv4kxz7gqyrh3cpt953f0k76slny9c3j2td4jce4nvdj54gewqld2p79arl4lwfwgcp6\nhttps://github.com/gustavonmartins/nostr-to-rss",
       {
         status: 200,
         headers: { "Content-Type": "text/plain" },
@@ -78,39 +78,42 @@ async function fetchNostrEvents(
     "wss://relay.mostr.pub",
   ];
   let events = [];
-  const sub = pool.subscribeMany(relays, [filter], {
-    onevent(event) {
-      //Only accepts posts started by the user
+  await new Promise((resolve) => {
+    const sub = pool.subscribeMany(relays, [filter], {
+      onevent(event) {
+        //Only accepts posts started by the user
 
-      {
-        const regex = new RegExp(whitelist.join("|"), "i"); // 'i' for case-insensitive
+        {
+          const regex = new RegExp(whitelist.join("|"), "i"); // 'i' for case-insensitive
 
-        let containsAny = false;
-        if (event.kind === 1) {
-          containsAny = regex.test(event.content);
-        } else if (event.kind === 30023) {
-          containsAny = regex.test(event.content) ||
-            regex.test(getTagValue(event, "title"));
-        }
+          let containsAny = false;
+          if (event.kind === 1) {
+            containsAny = regex.test(event.content);
+          } else if (event.kind === 30023) {
+            containsAny = regex.test(event.content) ||
+              regex.test(getTagValue(event, "title"));
+          }
 
-        if (containsAny === true) {
-          if (replies === false && getTagValue(event, "e") === "") {
-            events.push(event);
-            console.log(event);
-          } else if (replies === true) {
-            events.push(event);
-            console.log(event);
+          if (containsAny === true) {
+            if (replies === false && getTagValue(event, "e") === "") {
+              events.push(event);
+              console.log(event);
+            } else if (replies === true) {
+              events.push(event);
+              console.log(event);
+            }
           }
         }
-      }
-    },
-    oneose() {
-      console.log("END OF STREAM");
-      sub.close();
-    },
-  });
+      },
+      oneose() {
+        console.log("END OF STREAM")
+        sub.close();
+        resolve("");
+      },
+    });
+  }
+  )
 
-  await new Promise((resolve) => setTimeout(resolve, 15000));
   return events;
 }
 

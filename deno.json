@@ -8,5 +8,13 @@
     "@types/node": "npm:@types/node@^22.8.6",
     "feed": "npm:feed@^4.2.2",
     "nostr-tools": "npm:nostr-tools@^2.10.1"
+  },
+  "deploy": {
+    "project": "f725f80e-32c4-40c7-9e54-88c413b117b1",
+    "exclude": [
+      "**/node_modules"
+    ],
+    "include": [],
+    "entrypoint": "main.ts"
   }
 }
