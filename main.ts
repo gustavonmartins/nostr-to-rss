@@ -65,6 +65,25 @@ async function handleRequest(request: Request): Promise<Response> {
   });
 }
 
+function passes_whitelist(text: string, whitelist: string[]): boolean {
+  if (whitelist.length === 0) return true;
+
+  const text_words = text.split(/\s+/).map((word) => word.toLowerCase());
+  const whitelist_processed = whitelist.map((word) => word.toLowerCase());
+
+  // Convert lists to sets
+  const set1 = new Set(text_words);
+  const set2 = new Set(whitelist_processed);
+
+  // Check for at least one common element
+  for (const item of set1) {
+    if (set2.has(item)) {
+      return true; // Found a common element
+    }
+  }
+  return false; // No common elements found
+}
+
 async function fetchNostrEvents(
   filter: nostr.Filter,
   whitelist: string[],
@@ -82,25 +101,23 @@ async function fetchNostrEvents(
     const sub = pool.subscribeMany(relays, [filter], {
       onevent(event) {
         //Only accepts posts started by the user
+        //Only accepts text with whitelisted words, if a list is given
 
         {
-          const regex = new RegExp(whitelist.join("|"), "i"); // 'i' for case-insensitive
-
-          let containsAny = false;
-          if (event.kind === 1) {
-            containsAny = regex.test(event.content);
-          } else if (event.kind === 30023) {
-            containsAny = regex.test(event.content) ||
-              regex.test(getTagValue(event, "title"));
-          }
-
-          if (containsAny === true) {
-            if (replies === false && getTagValue(event, "e") === "") {
+          //Apllies replies only filter
+          if (
+            (replies === false && getTagValue(event, "e") === "") ||
+            (replies === true)
+          ) {
+            let containsAny = false;
+            if (event.kind === 1) {
+              containsAny = passes_whitelist(event.content, whitelist);
+            } else if (event.kind === 30023) {
+              containsAny = passes_whitelist(event.content, whitelist) ||
+                passes_whitelist(getTagValue(event, "title"), whitelist);
+            }
+            if (containsAny === true) {
               events.push(event);
-              //console.log(event);
-            } else if (replies === true) {
-              events.push(event);
-              //console.log(event);
             }
           }
         }
