@@ -97,22 +97,21 @@ async function fetchNostrEvents(
           if (containsAny === true) {
             if (replies === false && getTagValue(event, "e") === "") {
               events.push(event);
-              console.log(event);
+              //console.log(event);
             } else if (replies === true) {
               events.push(event);
-              console.log(event);
+              //console.log(event);
             }
           }
         }
       },
       oneose() {
-        console.log("END OF STREAM")
+        console.log("END OF STREAM");
         sub.close();
         resolve("");
       },
     });
-  }
-  )
+  });
 
   return events;
 }
@@ -132,6 +131,7 @@ function createAtomFeed(events: nostr.Event[]): Feed {
     return inputString.substring(0, 75) + " (...)";
   }
 
+  console.log("Atom feed will have this much events:" + events.length);
   for (const event of events) {
     if (event.kind === 30023) {
       //const result2 = event.tags.find(subList => subList[0] === "summary");
