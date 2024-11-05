@@ -68,17 +68,20 @@ async function handleRequest(request: Request): Promise<Response> {
 function passes_whitelist(text: string, whitelist: string[]): boolean {
   if (whitelist.length === 0) return true;
 
-  const text_words = text.split(/\s+/).map((word) => word.toLowerCase());
-  const whitelist_processed = whitelist.map((word) => word.toLowerCase());
+  // Normalize the string to remove accents
+  const normalizedWords = text.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase().split(/\s+/).sort();
 
-  // Convert lists to sets
-  const set1 = new Set(text_words);
-  const set2 = new Set(whitelist_processed);
+  const whitelist_processed = whitelist.map((word) =>
+    word.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+  ).sort();
 
   // Check for at least one common element
-  for (const item of set1) {
-    if (set2.has(item)) {
-      return true; // Found a common element
+  for (const textWord of normalizedWords) {
+    for (const whitelistWord of whitelist_processed) {
+      if (textWord.startsWith(whitelistWord)) {
+        return true;
+      }
     }
   }
   return false; // No common elements found
@@ -96,7 +99,7 @@ async function fetchNostrEvents(
     "wss://nostr.wine",
     "wss://relay.mostr.pub",
   ];
-  let events = [];
+  const events = [];
   await new Promise((resolve) => {
     const sub = pool.subscribeMany(relays, [filter], {
       onevent(event) {

@@ -4,6 +4,7 @@
     "dev": "deno run --watch main.ts"
   },
   "imports": {
+    "@nostr-dev-kit/ndk": "npm:@nostr-dev-kit/ndk@^2.10.5",
     "@std/assert": "jsr:@std/assert@1",
     "@types/node": "npm:@types/node@^22.8.6",
     "feed": "npm:feed@^4.2.2",
