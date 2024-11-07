@@ -23,6 +23,24 @@ function getTagValue(event: nostr.Event, key: string): string {
   return "";
 }
 
+// Import the package
+import NDK, { NDKEvent, NDKFilter } from "@nostr-dev-kit/ndk";
+
+const relays = [
+  "wss://nostr.mom",
+  "wss://nos.lol",
+  "wss://nostr.wine",
+  "wss://relay.mostr.pub",
+];
+
+// Create a new NDK instance with explicit relays
+const ndk = new NDK({
+  explicitRelayUrls: relays,
+});
+// Now connect to specified relays
+await ndk.connect();
+console.log("NOSTR NDK CONNECTED");
+
 async function handleRequest(request: Request): Promise<Response> {
   const url = new URL(request.url);
   const path = url.pathname;
@@ -48,11 +66,12 @@ async function handleRequest(request: Request): Promise<Response> {
   console.log(userPubkeys);
   console.log(whitelist);
 
-  // Create Nostr filter
-  const filter: nostr.Filter = {
-    authors: userPubkeys.map((upkey) => nostr.nip19.decode(upkey).data),
+  // Create a filter
+  const filter: NDKFilter = {
     kinds: kinds,
+    authors: userPubkeys.map((npub) => ndk.getUser({ npub: npub }).pubkey),
   };
+  // Will return all found events
 
   // Fetch events from Nostr relays
   const events = await fetchNostrEvents(filter, whitelist, replies);
@@ -87,56 +106,16 @@ function passes_whitelist(text: string, whitelist: string[]): boolean {
   return false; // No common elements found
 }
 
-async function fetchNostrEvents(
-  filter: nostr.Filter,
-  whitelist: string[],
-  replies: boolean,
-): Promise<nostr.Event[]> {
-  const pool = new nostr.SimplePool();
-  const relays = [
-    "wss://nostr.mom",
-    "wss://nos.lol",
-    "wss://nostr.wine",
-    "wss://relay.mostr.pub",
-  ];
-  const events = [];
-  await new Promise((resolve) => {
-    const sub = pool.subscribeMany(relays, [filter], {
-      onevent(event) {
-        //Only accepts posts started by the user
-        //Only accepts text with whitelisted words, if a list is given
+async function fetchNostrEvents(filter, whitelist: string[], replies: boolean) {
+  const events = await ndk.fetchEvents(filter);
+  const filteredevents = Array.from(events).filter((item) =>
+    passes_whitelist(item.content, whitelist)
+  );
 
-        {
-          //Apllies replies only filter
-          if (
-            (replies === false && getTagValue(event, "e") === "") ||
-            (replies === true)
-          ) {
-            let containsAny = false;
-            if (event.kind === 1) {
-              containsAny = passes_whitelist(event.content, whitelist);
-            } else if (event.kind === 30023) {
-              containsAny = passes_whitelist(event.content, whitelist) ||
-                passes_whitelist(getTagValue(event, "title"), whitelist);
-            }
-            if (containsAny === true) {
-              events.push(event);
-            }
-          }
-        }
-      },
-      oneose() {
-        console.log("END OF STREAM");
-        sub.close();
-        resolve("");
-      },
-    });
-  });
-
-  return events;
+  return new Set(filteredevents);
 }
 
-function createAtomFeed(events: nostr.Event[]): Feed {
+function createAtomFeed(events: Set<NDKEvent>): Feed {
   const feed = new Feed({
     title: "Nostr RSS Feed",
     description: "Creates RSS feed from nostr",
@@ -151,7 +130,7 @@ function createAtomFeed(events: nostr.Event[]): Feed {
     return inputString.substring(0, 75) + " (...)";
   }
 
-  console.log("Atom feed will have this much events:" + events.length);
+  console.log("Atom feed will have this much events:" + events.size);
   for (const event of events) {
     if (event.kind === 30023) {
       //const result2 = event.tags.find(subList => subList[0] === "summary");
