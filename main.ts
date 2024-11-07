@@ -62,19 +62,18 @@ async function handleRequest(request: Request): Promise<Response> {
   const replies = !(params.get("replies") === "false");
   //console.log(params);
   //console.log(params.get("pathname"))
-  console.log(kinds);
-  console.log(userPubkeys);
-  console.log(whitelist);
+  //console.log(kinds);
+  //console.log(userPubkeys);
+  console.log(`kinds: ${kinds}, whitelist: ${whitelist}`);
 
   const userPubkeys_05 = userPubkeys.filter((item) => item.includes("@"));
-  console.log(userPubkeys_05);
+  //console.log(userPubkeys_05);
 
   const userPromises = userPubkeys_05.map((nip05) =>
     ndk.getUserFromNip05(nip05)
   );
 
   const finalUser05List = await Promise.all(userPromises);
-  console.log("final list: " + finalUser05List);
 
   const finalUserNon05List = userPubkeys.filter((item) => !item.includes("@"));
 
@@ -101,7 +100,8 @@ async function handleRequest(request: Request): Promise<Response> {
 
 function passes_reply(tags: string[], reply_allowed: boolean): boolean {
   if (reply_allowed) return true;
-  else if (getTagValue(tags, "e") !== "") return false;
+  else if (getTagValue(tags, "e") === "") return true;
+  else return false;
 }
 
 function passes_whitelist(text: string, whitelist: string[]): boolean {
@@ -129,9 +129,9 @@ function passes_whitelist(text: string, whitelist: string[]): boolean {
 async function fetchNostrEvents(filter, whitelist: string[], replies: boolean) {
   const events = await ndk.fetchEvents(filter);
   const filteredevents = Array.from(events).filter((item) => {
-    //passes_reply(item.tags, replies) &&
-    return passes_whitelist(item.content, whitelist);
-  });
+    return passes_reply(item.tags, replies) &&
+      passes_whitelist(item.content, whitelist);
+  }).sort((a, b) => b.created_at - a.created_at);
 
   return new Set(filteredevents);
 }
@@ -151,7 +151,7 @@ function createAtomFeed(events: Set<NDKEvent>): Feed {
     return inputString.substring(0, 75) + " (...)";
   }
 
-  console.log("Atom feed will have this much events:" + events.size);
+  console.log(`Atom feed will have ${events.size} events`);
   for (const event of events) {
     if (event.kind === 30023) {
       //const result2 = event.tags.find(subList => subList[0] === "summary");
@@ -165,7 +165,7 @@ function createAtomFeed(events: Set<NDKEvent>): Feed {
         content: event.content,
         author: [{ name: nostr.nip19.npubEncode(event.pubkey) }],
       });
-    } else if (event.kind === 1) {
+    } else {
       //const result2 = event.tags.find(subList => subList[0] === "summary");
 
       feed.addItem({
