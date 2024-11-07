@@ -13,8 +13,8 @@ import { serve } from "https://deno.land/std@0.181.0/http/server.ts";
 import * as nostr from "npm:nostr-tools";
 import { Feed } from "npm:feed";
 
-function getTagValue(event: nostr.Event, key: string): string {
-  const result = event.tags.find((subList) => subList[0] === key);
+function getTagValue(tags: string[], key: string): string {
+  const result = tags.find((subList) => subList[0] === key);
   if (result != undefined) {
     if (result.length > 1) {
       return result[1];
@@ -66,10 +66,25 @@ async function handleRequest(request: Request): Promise<Response> {
   console.log(userPubkeys);
   console.log(whitelist);
 
+  const userPubkeys_05 = userPubkeys.filter((item) => item.includes("@"));
+  console.log(userPubkeys_05);
+
+  const userPromises = userPubkeys_05.map((nip05) =>
+    ndk.getUserFromNip05(nip05)
+  );
+
+  const finalUser05List = await Promise.all(userPromises);
+  console.log("final list: " + finalUser05List);
+
+  const finalUserNon05List = userPubkeys.filter((item) => !item.includes("@"));
+
   // Create a filter
   const filter: NDKFilter = {
     kinds: kinds,
-    authors: userPubkeys.map((npub) => ndk.getUser({ npub: npub }).pubkey),
+    authors: [
+      ...finalUser05List.map((item) => item.pubkey),
+      ...finalUserNon05List.map((npub) => ndk.getUser({ npub: npub }).pubkey),
+    ],
   };
   // Will return all found events
 
@@ -82,6 +97,11 @@ async function handleRequest(request: Request): Promise<Response> {
   return new Response(feed.atom1(), {
     headers: { "Content-Type": "application/atom+xml" },
   });
+}
+
+function passes_reply(tags: string[], reply_allowed: boolean): boolean {
+  if (reply_allowed) return true;
+  else if (getTagValue(tags, "e") !== "") return false;
 }
 
 function passes_whitelist(text: string, whitelist: string[]): boolean {
@@ -108,9 +128,10 @@ function passes_whitelist(text: string, whitelist: string[]): boolean {
 
 async function fetchNostrEvents(filter, whitelist: string[], replies: boolean) {
   const events = await ndk.fetchEvents(filter);
-  const filteredevents = Array.from(events).filter((item) =>
-    passes_whitelist(item.content, whitelist)
-  );
+  const filteredevents = Array.from(events).filter((item) => {
+    //passes_reply(item.tags, replies) &&
+    return passes_whitelist(item.content, whitelist);
+  });
 
   return new Set(filteredevents);
 }
@@ -136,7 +157,7 @@ function createAtomFeed(events: Set<NDKEvent>): Feed {
       //const result2 = event.tags.find(subList => subList[0] === "summary");
 
       feed.addItem({
-        title: getTagValue(event, "title"),
+        title: getTagValue(event.tags, "title"),
         date: new Date(event.created_at * 1000),
         published: new Date(event.created_at * 1000),
         id: event.id,
