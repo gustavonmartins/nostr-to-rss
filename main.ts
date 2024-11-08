@@ -64,7 +64,7 @@ async function handleRequest(request: Request): Promise<Response> {
   //console.log(params.get("pathname"))
   //console.log(kinds);
   //console.log(userPubkeys);
-  console.log(`kinds: ${kinds}, whitelist: ${whitelist}`);
+  console.log(`Query params are ${params}`);
 
   const userPubkeys_05 = userPubkeys.filter((item) => item.includes("@"));
   //console.log(userPubkeys_05);
@@ -105,11 +105,12 @@ function passes_reply(tags: string[], reply_allowed: boolean): boolean {
 }
 
 function passes_whitelist(text: string, whitelist: string[]): boolean {
+  const delimiters = /[\s\t\n\r!,\.#?()]+/;
   if (whitelist.length === 0) return true;
 
   // Normalize the string to remove accents
   const normalizedWords = text.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase().split(/\s+/).sort();
+    .toLowerCase().split(delimiters).sort();
 
   const whitelist_processed = whitelist.map((word) =>
     word.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
