@@ -110,21 +110,14 @@ function passes_whitelist(text: string, whitelist: string[]): boolean {
 
   // Normalize the string to remove accents
   const normalizedWords = text.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase().split(delimiters).sort();
+    .toLowerCase().split(delimiters);
 
   const whitelist_processed = whitelist.map((word) =>
     word.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-  ).sort();
+  );
 
   // Check for at least one common element
-  for (const textWord of normalizedWords) {
-    for (const whitelistWord of whitelist_processed) {
-      if (textWord.startsWith(whitelistWord)) {
-        return true;
-      }
-    }
-  }
-  return false; // No common elements found
+  return whitelist_processed.some(item => normalizedWords.includes(item))
 }
 
 async function fetchNostrEvents(filter, whitelist: string[], replies: boolean) {
