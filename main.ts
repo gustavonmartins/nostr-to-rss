@@ -115,7 +115,10 @@ function passes_whitelist(words: string[], whitelist: string[]): boolean {
   // Check for at least one common element
   for (const word of words) {
     for (const allowed_word of whitelist) {
-      if (word.startsWith(allowed_word)) return true;
+      if (word.startsWith(allowed_word)) {
+        console.log(`whitelist criteria ${allowed_word} approved word ${word}`);
+        return true;
+      }
     }
   }
   return false;
@@ -126,7 +129,10 @@ function passes_blacklist(words: string[], blacklist: string[]): boolean {
 
   for (const word of words) {
     for (const blocked_word of blacklist) {
-      if (word.startsWith(blocked_word)) return false;
+      if (word.startsWith(blocked_word)) {
+        console.log(`blacklist criteria ${blocked_word} blocked word ${word}`);
+        return false;
+      }
     }
   }
   return true;
@@ -141,6 +147,14 @@ async function fetchNostrEvents(
   const events = await ndk.fetchEvents(filter);
   const delimiters = /[\s\t\n\r!,\.#?()]+/;
 
+  const normalizedWhitelist = whitelist.map((word) =>
+    word.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+  );
+
+  const normalizedBlacklist = blacklist.map((word) =>
+    word.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+  );
+
   const filteredevents = Array.from(events).filter((item) => {
     // Normalize the string to remove accents
     const normalizedWords = item.content.normalize("NFD").replace(
@@ -150,8 +164,8 @@ async function fetchNostrEvents(
       .toLowerCase().split(delimiters);
 
     return passes_reply(item.tags, replies) &&
-      passes_whitelist(normalizedWords, whitelist) &&
-      passes_blacklist(normalizedWords, blacklist);
+      passes_whitelist(normalizedWords, normalizedWhitelist) &&
+      passes_blacklist(normalizedWords, normalizedBlacklist);
   }).sort((a, b) => b.created_at - a.created_at);
 
   return new Set(filteredevents);
