@@ -66,7 +66,11 @@ async function handleRequest(request: Request): Promise<Response> {
   //console.log(userPubkeys);
   console.log(`Query params are ${params}`);
 
-  const userPubkeys_05 = userPubkeys.filter((item) => item.includes("@"));
+  const nip05_separator = ".";
+
+  const userPubkeys_05 = userPubkeys.filter((item) =>
+    item.includes(nip05_separator)
+  );
   //console.log(userPubkeys_05);
 
   const userPromises = userPubkeys_05.map((nip05) =>
@@ -75,7 +79,9 @@ async function handleRequest(request: Request): Promise<Response> {
 
   const finalUser05List = await Promise.all(userPromises);
 
-  const finalUserNon05List = userPubkeys.filter((item) => !item.includes("@"));
+  const finalUserNon05List = userPubkeys.filter((item) =>
+    item.startsWith("npub")
+  );
 
   // Create a filter
   const filter: NDKFilter = {
@@ -117,7 +123,7 @@ function passes_whitelist(text: string, whitelist: string[]): boolean {
   );
 
   // Check for at least one common element
-  return whitelist_processed.some(item => normalizedWords.includes(item))
+  return whitelist_processed.some((item) => normalizedWords.includes(item));
 }
 
 async function fetchNostrEvents(filter, whitelist: string[], replies: boolean) {
