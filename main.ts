@@ -12,6 +12,7 @@ You should have received a copy of the GNU Affero General Public License along w
 import { serve } from "https://deno.land/std@0.181.0/http/server.ts";
 import * as nostr from "npm:nostr-tools";
 import { Feed } from "npm:feed";
+import NDK, { NDKEvent, NDKFilter } from "@nostr-dev-kit/ndk";
 
 function getTagValue(tags: string[], key: string): string {
   const result = tags.find((subList) => subList[0] === key);
@@ -22,9 +23,6 @@ function getTagValue(tags: string[], key: string): string {
   }
   return "";
 }
-
-// Import the package
-import NDK, { NDKEvent, NDKFilter } from "@nostr-dev-kit/ndk";
 
 const relays = [
   "wss://nostr.mom",
@@ -59,6 +57,7 @@ async function handleRequest(request: Request): Promise<Response> {
   const userPubkeys: string[] = params.get("users")?.split(",") || [];
   const kinds = params.get("kinds")?.split(",").map(Number) || [1, 30023];
   const whitelist = params.get("whitelist")?.split(",") || [];
+  const blacklist = params.get("blacklist")?.split(",") || [];
   const replies = !(params.get("replies") === "false");
   //console.log(params);
   //console.log(params.get("pathname"))
@@ -94,7 +93,7 @@ async function handleRequest(request: Request): Promise<Response> {
   // Will return all found events
 
   // Fetch events from Nostr relays
-  const events = await fetchNostrEvents(filter, whitelist, replies);
+  const events = await fetchNostrEvents(filter, whitelist, replies, blacklist);
 
   // Convert events to Atom feed
   const feed = createAtomFeed(events);
@@ -110,27 +109,49 @@ function passes_reply(tags: string[], reply_allowed: boolean): boolean {
   else return false;
 }
 
-function passes_whitelist(text: string, whitelist: string[]): boolean {
-  const delimiters = /[\s\t\n\r!,\.#?()]+/;
+function passes_whitelist(words: string[], whitelist: string[]): boolean {
   if (whitelist.length === 0) return true;
 
-  // Normalize the string to remove accents
-  const normalizedWords = text.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase().split(delimiters);
-
-  const whitelist_processed = whitelist.map((word) =>
-    word.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-  );
-
   // Check for at least one common element
-  return whitelist_processed.some((item) => normalizedWords.includes(item));
+  for (const word of words) {
+    for (const allowed_word of whitelist) {
+      if (word.startsWith(allowed_word)) return true;
+    }
+  }
+  return false;
 }
 
-async function fetchNostrEvents(filter, whitelist: string[], replies: boolean) {
+function passes_blacklist(words: string[], blacklist: string[]): boolean {
+  if (blacklist.length === 0) return true;
+
+  for (const word of words) {
+    for (const blocked_word of blacklist) {
+      if (word.startsWith(blocked_word)) return false;
+    }
+  }
+  return true;
+}
+
+async function fetchNostrEvents(
+  filter,
+  whitelist: string[],
+  replies: boolean,
+  blacklist: string[],
+) {
   const events = await ndk.fetchEvents(filter);
+  const delimiters = /[\s\t\n\r!,\.#?()]+/;
+
   const filteredevents = Array.from(events).filter((item) => {
+    // Normalize the string to remove accents
+    const normalizedWords = item.content.normalize("NFD").replace(
+      /[\u0300-\u036f]/g,
+      "",
+    )
+      .toLowerCase().split(delimiters);
+
     return passes_reply(item.tags, replies) &&
-      passes_whitelist(item.content, whitelist);
+      passes_whitelist(normalizedWords, whitelist) &&
+      passes_blacklist(normalizedWords, blacklist);
   }).sort((a, b) => b.created_at - a.created_at);
 
   return new Set(filteredevents);
