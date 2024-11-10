@@ -13,6 +13,7 @@ import { serve } from "https://deno.land/std@0.181.0/http/server.ts";
 import * as nostr from "npm:nostr-tools";
 import { Feed } from "npm:feed";
 import NDK, { NDKEvent, NDKFilter } from "@nostr-dev-kit/ndk";
+import { text_filter } from "./filters.ts";
 
 function getTagValue(tags: string[], key: string): string {
   const result = tags.find((subList) => subList[0] === key);
@@ -109,33 +110,6 @@ function passes_reply(tags: string[], reply_allowed: boolean): boolean {
   else return false;
 }
 
-function passes_whitelist(words: string[], whitelist: string[]): boolean {
-  if (whitelist.length === 0) return true;
-
-  // Check for at least one common element
-  for (const word of words) {
-    for (const allowed_word of whitelist) {
-      if (word.startsWith(allowed_word)) {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-function passes_blacklist(words: string[], blacklist: string[]): boolean {
-  if (blacklist.length === 0) return true;
-
-  for (const word of words) {
-    for (const blocked_word of blacklist) {
-      if (word.startsWith(blocked_word)) {
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
 async function fetchNostrEvents(
   filter,
   whitelist: string[],
@@ -143,27 +117,10 @@ async function fetchNostrEvents(
   blacklist: string[],
 ) {
   const events = await ndk.fetchEvents(filter);
-  const delimiters = /[\s\t\n\r!,\.#?()]+/;
-
-  const normalizedWhitelist = whitelist.map((word) =>
-    word.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-  );
-
-  const normalizedBlacklist = blacklist.map((word) =>
-    word.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-  );
 
   const filteredevents = Array.from(events).filter((item) => {
-    // Normalize the string to remove accents
-    const normalizedWords = item.content.normalize("NFD").replace(
-      /[\u0300-\u036f]/g,
-      "",
-    )
-      .toLowerCase().split(delimiters);
-
     return passes_reply(item.tags, replies) &&
-      passes_whitelist(normalizedWords, normalizedWhitelist) &&
-      passes_blacklist(normalizedWords, normalizedBlacklist);
+      text_filter(item.content, whitelist, blacklist);
   }).sort((a, b) => b.created_at - a.created_at);
 
   const approval_ratio: number = filteredevents.length / events.size;
