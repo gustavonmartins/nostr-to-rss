@@ -116,7 +116,6 @@ function passes_whitelist(words: string[], whitelist: string[]): boolean {
   for (const word of words) {
     for (const allowed_word of whitelist) {
       if (word.startsWith(allowed_word)) {
-        console.log(`whitelist criteria ${allowed_word} approved word ${word}`);
         return true;
       }
     }
@@ -130,7 +129,6 @@ function passes_blacklist(words: string[], blacklist: string[]): boolean {
   for (const word of words) {
     for (const blocked_word of blacklist) {
       if (word.startsWith(blocked_word)) {
-        console.log(`blacklist criteria ${blocked_word} blocked word ${word}`);
         return false;
       }
     }
@@ -167,6 +165,9 @@ async function fetchNostrEvents(
       passes_whitelist(normalizedWords, normalizedWhitelist) &&
       passes_blacklist(normalizedWords, normalizedBlacklist);
   }).sort((a, b) => b.created_at - a.created_at);
+
+  const approval_ratio: number = filteredevents.length / events.size;
+  console.log(`Current filter approved ${approval_ratio * 100} pct of events`);
 
   return new Set(filteredevents);
 }
