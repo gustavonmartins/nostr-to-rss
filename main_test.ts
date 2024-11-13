@@ -1,7 +1,7 @@
 import { assertEquals } from "@std/assert";
 import { text_filter } from "./filters.ts";
 
-Deno.test("Test text filters", async () => {
+Deno.test("Test text filters", () => {
   const whitelist = ["health", "pokemon"];
   const blacklist = ["bitcoin", "btc"];
 
@@ -28,3 +28,5 @@ Deno.test("Test text filters", async () => {
   assertEquals(text_filter(fails_03, whitelist, blacklist), false);
   assertEquals(text_filter(fails_04, whitelist, blacklist), false);
 });
+
+// Missing test: replies filter
