@@ -106,8 +106,11 @@ async function handleRequest(request: Request): Promise<Response> {
 
 function passes_reply(tags: string[], reply_allowed: boolean): boolean {
   if (reply_allowed) return true;
-  else if (getTagValue(tags, "e") === "") return true;
-  else return false;
+  else if (getTagValue(tags, "e") === "" && getTagValue(tags, "q") === "") {
+    {
+      return true;
+    }
+  } else return false;
 }
 
 async function fetchNostrEvents(
