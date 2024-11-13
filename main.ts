@@ -12,7 +12,7 @@ You should have received a copy of the GNU Affero General Public License along w
 import { serve } from "https://deno.land/std@0.181.0/http/server.ts";
 import * as nostr from "npm:nostr-tools";
 import { Feed } from "npm:feed";
-import NDK, { NDKEvent, NDKFilter } from "@nostr-dev-kit/ndk";
+import NDK, { NDKEvent, NDKFilter, NDKUser } from "@nostr-dev-kit/ndk";
 import { text_filter } from "./filters.ts";
 
 function getTagValue(tags: string[], key: string): string {
@@ -83,13 +83,21 @@ async function handleRequest(request: Request): Promise<Response> {
     item.startsWith("npub")
   );
 
+  //Create user list as hext
+  const userListHex = [
+    ...finalUser05List.map((item) => item),
+    ...finalUserNon05List.map((npub) => ndk.getUser({ npub: npub })),
+  ];
+
+  const userListPubKey = userListHex.map((item) => item.pubkey);
+
+  //Gets info like name
+  await userListHex.map((item) => item.fetchProfile());
+
   // Create a filter
   const filter: NDKFilter = {
     kinds: kinds,
-    authors: [
-      ...finalUser05List.map((item) => item.pubkey),
-      ...finalUserNon05List.map((npub) => ndk.getUser({ npub: npub }).pubkey),
-    ],
+    authors: userListPubKey,
   };
   // Will return all found events
 
@@ -97,7 +105,7 @@ async function handleRequest(request: Request): Promise<Response> {
   const events = await fetchNostrEvents(filter, whitelist, replies, blacklist);
 
   // Convert events to Atom feed
-  const feed = createAtomFeed(events);
+  const feed = createAtomFeed(events, userListHex);
 
   return new Response(feed.atom1(), {
     headers: { "Content-Type": "application/atom+xml" },
@@ -132,9 +140,11 @@ async function fetchNostrEvents(
   return new Set(filteredevents);
 }
 
-function createAtomFeed(events: Set<NDKEvent>): Feed {
+function createAtomFeed(events: Set<NDKEvent>, ndkUsers: NDKUser[]): Feed {
   const feed = new Feed({
-    title: "Nostr RSS Feed",
+    title: `Nostr RSS feed: ${
+      (ndkUsers.map((user) => user.profile?.name)).join(", ")
+    }`,
     description: "Creates RSS feed from nostr",
     id: "github.com/gustavonmartins/nostr-to-rss",
     link: "github.com/gustavonmartins/nostr-to-rss",
