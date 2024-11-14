@@ -1,6 +1,8 @@
 {
   "version": "4",
   "specifiers": {
+    "jsr:@hono/hono@*": "4.6.10",
+    "jsr:@hono/hono@^4.6.10": "4.6.10",
     "jsr:@std/assert@1": "1.0.7",
     "jsr:@std/internal@^1.0.5": "1.0.5",
     "npm:@nostr-dev-kit/ndk@^2.10.5": "2.10.5",
@@ -12,6 +14,9 @@
     "npm:nostr-tools@^2.10.1": "2.10.1"
   },
   "jsr": {
+    "@hono/hono@4.6.10": {
+      "integrity": "dae93ac8bb49881f99506aa8e01e5536d5d72cc3c2b556bde2816fdf25ca609c"
+    },
     "@std/assert@1.0.7": {
       "integrity": "64ce9fac879e0b9f3042a89b3c3f8ccfc9c984391af19e2087513a79d73e28c3",
       "dependencies": [
@@ -369,6 +374,7 @@
   },
   "workspace": {
     "dependencies": [
+      "jsr:@hono/hono@^4.6.10",
       "jsr:@std/assert@1",
       "npm:@nostr-dev-kit/ndk@^2.10.5",
       "npm:@types/node@^22.8.6",

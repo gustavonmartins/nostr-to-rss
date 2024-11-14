@@ -14,6 +14,7 @@ import * as nostr from "npm:nostr-tools";
 import { Feed } from "npm:feed";
 import NDK, { NDKEvent, NDKFilter } from "@nostr-dev-kit/ndk";
 import { text_filter } from "./filters.ts";
+import { Hono } from "jsr:@hono/hono";
 
 function getTagValue(tags: string[], key: string): string {
   const result = tags.find((subList) => subList[0] === key);
@@ -40,26 +41,27 @@ const ndk = new NDK({
 await ndk.connect();
 console.log("NOSTR NDK CONNECTED");
 
-async function handleRequest(request: Request): Promise<Response> {
-  const url = new URL(request.url);
-  const path = url.pathname;
-  const params = url.searchParams;
-  if (path !== "/feed") {
-    return new Response(
-      "Please, use the /feed route. \nExample: https://nostr-to-rss.deno.dev/feed?users=npub1auwq2edy2tahk58uepwyvjjmdvkxdvmrv492xts8m2s030gla0msruxp7s,npub1wqxxe0cjaxnvmrv4lkvx8d5dlft7ewswyn09w5v7fg7642fgzm7srucxws&kinds=1,30023&replies=true&whitelist=art,food,cooking,painting\n users is the list of npubs to follow, \nkinds are the nostr kinds to subscribe (usually 1 and 30023), and \nreplies (true or false) is to indicate if replies are to be shown or not\n\n made by https://njump.me/nprofile1qydhwumn8ghj7emvv4shxmmwv96x7u3wv3jhvtmjv4kxz7gqyrh3cpt953f0k76slny9c3j2td4jce4nvdj54gewqld2p79arl4lwfwgcp6\nhttps://github.com/gustavonmartins/nostr-to-rss",
-      {
-        status: 200,
-        headers: { "Content-Type": "text/plain" },
-      },
-    );
-  }
+const app = new Hono({ strict: false });
+app.get("/feed", async (c) => await handleRequest(c));
+app.notFound((c) => {
+  return c.text(
+    "Please, use the /feed route. \nExample: https://nostr-to-rss.deno.dev/feed?users=npub1auwq2edy2tahk58uepwyvjjmdvkxdvmrv492xts8m2s030gla0msruxp7s,npub1wqxxe0cjaxnvmrv4lkvx8d5dlft7ewswyn09w5v7fg7642fgzm7srucxws&kinds=1,30023&replies=true&whitelist=art,food,cooking,painting\n users is the list of npubs to follow, \nkinds are the nostr kinds to subscribe (usually 1 and 30023), and \nreplies (true or false) is to indicate if replies are to be shown or not\n\n made by https://njump.me/nprofile1qydhwumn8ghj7emvv4shxmmwv96x7u3wv3jhvtmjv4kxz7gqyrh3cpt953f0k76slny9c3j2td4jce4nvdj54gewqld2p79arl4lwfwgcp6\nhttps://github.com/gustavonmartins/nostr-to-rss",
+    {
+      status: 200,
+      headers: { "Content-Type": "text/plain" },
+    },
+  );
+});
+
+async function handleRequest(c) {
+  const params = c.req;
 
   // Extract query parameters
-  const userPubkeys: string[] = params.get("users")?.split(",") || [];
-  const kinds = params.get("kinds")?.split(",").map(Number) || [1, 30023];
-  const whitelist = params.get("whitelist")?.split(",") || [];
-  const blacklist = params.get("blacklist")?.split(",") || [];
-  const replies = !(params.get("replies") === "false");
+  const userPubkeys: string[] = params.query("users")?.split(",") || [];
+  const kinds = params.query("kinds")?.split(",").map(Number) || [1, 30023];
+  const whitelist = params.query("whitelist")?.split(",") || [];
+  const blacklist = params.query("blacklist")?.split(",") || [];
+  const replies = !(params.query("replies") === "false");
   //console.log(params);
   //console.log(params.get("pathname"))
   //console.log(kinds);
@@ -99,7 +101,7 @@ async function handleRequest(request: Request): Promise<Response> {
   // Convert events to Atom feed
   const feed = createAtomFeed(events);
 
-  return new Response(feed.atom1(), {
+  return c.body(feed.atom1(), {
     headers: { "Content-Type": "application/atom+xml" },
   });
 }
@@ -177,5 +179,5 @@ function createAtomFeed(events: Set<NDKEvent>): Feed {
   return feed;
 }
 
-serve(handleRequest, { port: 8000 });
+serve(app.fetch);
 console.log("Server running on http://localhost:8000");
