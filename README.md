@@ -1,6 +1,7 @@
 NostrRSS: Curate your Nostr feed like a pro
 
-NostrRSS is a powerful RSS-based Nostr client that puts you in control of your content consumption. Key features:
+NostrRSS is a powerful RSS-based Nostr client that puts you in control of your
+content consumption. Key features:
 
     Seamless integration with existing RSS readers
     Advanced spam filtering to block unwanted content

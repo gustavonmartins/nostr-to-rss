@@ -132,7 +132,7 @@ async function fetchNostrEvents(
   const events = await ndk.fetchEvents(filter);
 
   const filteredevents = Array.from(events).filter((item) => {
-    return passes_reply(item.tags, replies) &&
+    return passes_reply(item.tags.flat(), replies) &&
       text_filter(item.content, whitelist, blacklist);
   }).sort((a, b) => b.created_at - a.created_at);
 
@@ -166,7 +166,7 @@ function createAtomFeed(events: Set<NDKEvent>, ndkUsers: NDKUser[]): Feed {
       //const result2 = event.tags.find(subList => subList[0] === "summary");
 
       feed.addItem({
-        title: getTagValue(event.tags, "title"),
+        title: getTagValue(event.tags.flat(), "title"),
         date: new Date(event.created_at * 1000),
         published: new Date(event.created_at * 1000),
         id: event.id,
@@ -193,4 +193,6 @@ function createAtomFeed(events: Set<NDKEvent>, ndkUsers: NDKUser[]): Feed {
 }
 
 serve(app.fetch);
+export default app;
+
 console.log("Server running on http://localhost:8000");

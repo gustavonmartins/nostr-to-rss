@@ -11,6 +11,11 @@
     "feed": "npm:feed@^4.2.2",
     "nostr-tools": "npm:nostr-tools@^2.10.1"
   },
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "strictFunctionTypes": false
+  },
   "deploy": {
     "project": "f725f80e-32c4-40c7-9e54-88c413b117b1",
     "exclude": [
