@@ -8,17 +8,18 @@ export async function getFeedFromDefaultList(
 ): Promise<Response> {
   const params = c.req;
   // Extract query parameters
-  const userids: string[] = params.query("users")?.split(",") || [];
+  const listownerid = params.param("userid");
   const kinds = params.query("kinds")?.split(",").map(Number) || [1, 30023];
   const whitelist = params.query("whitelist")?.split(",") || [];
   const blacklist = params.query("blacklist")?.split(",") || [];
   const replies = !(params.query("replies") === "false");
+  console.log(`HTTP query is ${params.url}`);
 
   //Will return the http call, but only when atom repo gave all items of feed back
   const p: Promise<Response> = new Promise((resolve, reject) => {
     //TODO: Remove dummy value
     const filter = {
-      userid: userids,
+      listownerid: listownerid,
       replies: replies,
       blacklist: blacklist,
       whitelist: whitelist,

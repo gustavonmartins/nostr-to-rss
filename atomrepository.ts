@@ -17,21 +17,22 @@ class AtomRepository {
       //Tells to nostr repo to start fetchin events, and tell when it stopped.
       //All fetched events will be slowly added to a place specified here
       const nostrEvents: Set<NDKEvent> = new Set<NDKEvent>();
+      console.log(`ATOM repo: filter is: ${filter.userids}`);
       const nostrEventsOpenEded = this.nostrRepo.getOpenEndedEvents(
         filter,
         nostrEvents,
       );
       //When all events are avaiable, then create a feed (no need to optimiye further, because from here on its pretty quick)
       nostrEventsOpenEded.then(() => {
-        const eventList = Array.from(nostrEvents).filter((event) =>
+        const eventListFiltered = Array.from(nostrEvents).filter((event) =>
           passes_reply(event.tags, filter.replies) &&
           text_filter(event.content, filter.whitelist, filter.blacklist)
         );
-        const pass_ratio: number = eventList.length / nostrEvents.size;
+        const pass_ratio: number = eventListFiltered.length / nostrEvents.size;
         console.log(
           `Userlist: ${pass_ratio * 100} pct of events passed filters`,
         );
-        const atomFeed = AtomRepository.createAtomFeed(eventList, []);
+        const atomFeed = AtomRepository.createAtomFeed(eventListFiltered, []);
         resolve(atomFeed);
       });
     });

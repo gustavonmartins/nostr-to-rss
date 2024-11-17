@@ -1,5 +1,6 @@
-import NDK, { NDKEvent } from "@nostr-dev-kit/ndk";
+import NDK, { NDKEvent, NDKFilter } from "@nostr-dev-kit/ndk";
 import { passes_reply, text_filter } from "./filters.ts";
+import { getTagsMultiple } from "./utils.ts";
 
 class NostrRepository {
   private ndk: NDK;
@@ -8,36 +9,44 @@ class NostrRepository {
     this.ndk = ndk;
   }
 
-  getOpenEndedEvents(
+  async getOpenEndedEvents(
     filter,
     whereToStoreEvents: Set<NDKEvent>,
   ): Promise<boolean> {
-    const event1 = new NDKEvent(null, {
-      created_at: 1731870206,
-      content: "DUMMY ITEM CONTENT 1",
-      tags: [["faketag"]],
-      pubkey:
-        "ef1c0565a452fb7b50fcc85c464a5b6b2c66b363654aa32e07daa0f8bd1febf7",
-    });
-    const event2 = new NDKEvent(null, {
-      created_at: 1731870206,
-      content: "DUMMY ITEM CONTENT 2",
-      tags: [["faketag2"]],
-      pubkey:
-        "ef1c0565a452fb7b50fcc85c464a5b6b2c66b363654aa32e07daa0f8bd1febf7",
-    });
-    const event3 = new NDKEvent(null, {
-      created_at: 1731870206,
-      content: "Spammy bitcoins!",
-      tags: [["faketag2"]],
-      pubkey:
-        "ef1c0565a452fb7b50fcc85c464a5b6b2c66b363654aa32e07daa0f8bd1febf7",
-    });
+    // Create a filter
+    console.log(`nostr repo: filter is: ${filter.listownerid}`);
+
+    let subscribedToUsers: string[] = [];
+
+    if (filter.listownerid !== undefined) {
+      const userListEvent: NDKEvent = await this.ndk.fetchEvent({
+        kinds: [3],
+        authors: [this.ndk.getUser({ npub: filter.listownerid }).pubkey],
+      });
+      subscribedToUsers = getTagsMultiple(userListEvent.tags, "p").flat();
+      console.log(
+        `NOST REPO: LIst subscribe to ${subscribedToUsers.length} users`,
+      );
+    }
+
+    const ndkfilter: NDKFilter = {
+      kinds: [1, 30023],
+      authors: subscribedToUsers,
+    };
+
     const p: Promise<boolean> = new Promise((resolve, reject) => {
-      whereToStoreEvents.add(event1);
-      whereToStoreEvents.add(event2);
-      whereToStoreEvents.add(event3);
-      resolve(true);
+      //console.log(`nostr repo: subscribing to ${subscribedToUsers}`);
+      const sub = this.ndk.subscribe(ndkfilter, { closeOnEose: true });
+      console.log("nostr repo: subscribed");
+      sub.on("event", (event: NDKEvent) => {
+        whereToStoreEvents.add(event);
+        //console.log("nostr repo: got an event");
+      });
+
+      sub.on("eose", () => {
+        console.log("End of stream reached. Subscription will now close.");
+        resolve(true);
+      });
     });
     return p;
   }
