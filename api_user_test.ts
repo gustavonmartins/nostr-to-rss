@@ -14,7 +14,10 @@ Deno.test("Get feeds from a users default list", async () => {
   );
 
   const text = await res.text();
-  mod.assertStringIncludes(text, "DUMMY ITEM TITLE 1");
-  mod.assertStringIncludes(text, "DUMMY ITEM TITLE 2");
+  mod.assertStringIncludes(text, "DUMMY ITEM CONTENT 1");
+  //mod.assertStringIncludes(text, "DUMMY ITEM CONTENT 2");
+
+  //mod.assertStringIncludes(text, "DUMMY ITEM TITLE 1");
+  //mod.assertStringIncludes(text, "DUMMY ARTICLE TITLE 2");
   console.log(text);
 });

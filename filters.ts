@@ -50,3 +50,28 @@ function passes_blacklist(words: Set<string>, blacklist: string[]): boolean {
   }
   return true;
 }
+
+export function passes_reply(
+  tags: string[][],
+  reply_allowed: boolean,
+): boolean {
+  if (reply_allowed) return true;
+  else if (
+    getTagValue(tags, "e").length === 0 && getTagValue(tags, "q").length === 0
+  ) {
+    {
+      //console.log(tags);
+      return true;
+    }
+  } else return false;
+}
+
+function getTagValue(tags: string[][], key: string): string[] {
+  const result = tags.find((subList) => subList[0] === key);
+  if (result != undefined) {
+    if (result.length > 1) {
+      return result.slice(1);
+    }
+  }
+  return [];
+}
