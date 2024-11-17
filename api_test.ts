@@ -1,4 +1,3 @@
-import { Hono } from "jsr:@hono/hono";
 import * as mod from "@std/assert";
 
 import app from "./main.ts";
