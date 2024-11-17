@@ -1,5 +1,6 @@
 import { Hono } from "jsr:@hono/hono";
-import { assertStringIncludes } from "https://deno.land/std/testing/asserts.ts";
+import * as mod from "@std/assert";
+
 import app from "./main.ts";
 
 Deno.test("GET / default route should contain entry page", async () => {
@@ -7,7 +8,7 @@ Deno.test("GET / default route should contain entry page", async () => {
   const text = await res.text();
 
   // Assert that the response text includes the specified string
-  assertStringIncludes(text, "Please, use the");
+  mod.assertStringIncludes(text, "Please, use the");
 });
 
 Deno.test("GET / unexisting route should contain entry page", async () => {
@@ -15,5 +16,5 @@ Deno.test("GET / unexisting route should contain entry page", async () => {
   const text = await res.text();
 
   // Assert that the response text includes the specified string
-  assertStringIncludes(text, "Please, use the");
+  mod.assertStringIncludes(text, "Please, use the");
 });
