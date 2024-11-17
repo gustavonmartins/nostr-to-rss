@@ -16,6 +16,10 @@ import NDK from "@nostr-dev-kit/ndk";
 import { Hono } from "jsr:@hono/hono";
 import { handleRequest } from "./feedcontroller.ts";
 
+import { getFeedFromDefaultList } from "./feedFromUserList/controller.ts";
+import { AtomRepository } from "./atomrepository.ts";
+import { NostrRepository } from "./nostrrepo.ts";
+
 const relays = [
   "wss://nostr.mom",
   "wss://nos.lol",
@@ -32,6 +36,10 @@ await ndk.connect();
 console.log("NOSTR NDK CONNECTED");
 
 const app = new Hono({ strict: false });
+
+const nostrRepo = new NostrRepository(ndk);
+const atomRepository = new AtomRepository(nostrRepo);
+
 app.get("/feed", async (c) => await handleRequest(ndk, c));
 app.get("/", (c) => {
   return c.text(
@@ -51,6 +59,11 @@ app.notFound((c) => {
     },
   );
 });
+
+app.get(
+  "/api/v1/rss/user/:userid/defaultlist",
+  async (c) => await getFeedFromDefaultList(atomRepository, c),
+);
 
 serve(app.fetch);
 export default app;
