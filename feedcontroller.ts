@@ -1,6 +1,5 @@
 import NDK from "@nostr-dev-kit/ndk";
 
-
 import { NDKFilter } from "@nostr-dev-kit/ndk";
 import { Context } from "@hono/hono";
 import { AtomRepository } from "./atomrepository.ts";
@@ -66,7 +65,7 @@ export async function handleRequest(ndk: NDK, c: Context) {
   );
 
   // Convert events to Atom feed
-  const feed = AtomRepository.createAtomFeed(events, userListHex);
+  const feed = AtomRepository.createAtomFeed(Array.from(events), userListHex);
 
   return c.body(feed.atom1(), {
     headers: { "Content-Type": "application/atom+xml" },

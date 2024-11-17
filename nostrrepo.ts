@@ -8,7 +8,10 @@ class NostrRepository {
     this.ndk = ndk;
   }
 
-  getOpenEndedEvents(whereToStoreEvents: Set<NDKEvent>): Promise<boolean> {
+  getOpenEndedEvents(
+    filter,
+    whereToStoreEvents: Set<NDKEvent>,
+  ): Promise<boolean> {
     const event1 = new NDKEvent(null, {
       created_at: 1731870206,
       content: "DUMMY ITEM CONTENT 1",
@@ -23,9 +26,17 @@ class NostrRepository {
       pubkey:
         "ef1c0565a452fb7b50fcc85c464a5b6b2c66b363654aa32e07daa0f8bd1febf7",
     });
+    const event3 = new NDKEvent(null, {
+      created_at: 1731870206,
+      content: "Spammy bitcoins!",
+      tags: [["faketag2"]],
+      pubkey:
+        "ef1c0565a452fb7b50fcc85c464a5b6b2c66b363654aa32e07daa0f8bd1febf7",
+    });
     const p: Promise<boolean> = new Promise((resolve, reject) => {
       whereToStoreEvents.add(event1);
       whereToStoreEvents.add(event2);
+      whereToStoreEvents.add(event3);
       resolve(true);
     });
     return p;

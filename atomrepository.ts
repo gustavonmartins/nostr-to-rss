@@ -2,6 +2,7 @@ import { NDKArticle, NDKEvent, NDKUser } from "@nostr-dev-kit/ndk";
 import { NostrRepository } from "./nostrrepo.ts";
 import { Feed } from "feed";
 import * as nostr from "npm:nostr-tools";
+import { passes_reply, text_filter } from "./filters.ts";
 
 class AtomRepository {
   private nostrRepo: NostrRepository;
@@ -11,17 +12,26 @@ class AtomRepository {
     this.nostrRepo = nostrRepo;
   }
 
-  getFeedPromise(): Promise<Feed> {
+  getFeedPromise(filter): Promise<Feed> {
     const p: Promise<Feed> = new Promise((resolve, reject) => {
       //Tells to nostr repo to start fetchin events, and tell when it stopped.
       //All fetched events will be slowly added to a place specified here
       const nostrEvents: Set<NDKEvent> = new Set<NDKEvent>();
       const nostrEventsOpenEded = this.nostrRepo.getOpenEndedEvents(
+        filter,
         nostrEvents,
       );
       //When all events are avaiable, then create a feed (no need to optimiye further, because from here on its pretty quick)
       nostrEventsOpenEded.then(() => {
-        const atomFeed = AtomRepository.createAtomFeed(nostrEvents, []);
+        const eventList = Array.from(nostrEvents).filter((event) =>
+          passes_reply(event.tags, filter.replies) &&
+          text_filter(event.content, filter.whitelist, filter.blacklist)
+        );
+        const pass_ratio: number = eventList.length / nostrEvents.size;
+        console.log(
+          `Userlist: ${pass_ratio * 100} pct of events passed filters`,
+        );
+        const atomFeed = AtomRepository.createAtomFeed(eventList, []);
         resolve(atomFeed);
       });
     });
@@ -29,7 +39,7 @@ class AtomRepository {
     return p;
   }
 
-  static createAtomFeed(events: Set<NDKEvent>, ndkUsers: NDKUser[]): Feed {
+  static createAtomFeed(events: NDKEvent[], ndkUsers: NDKUser[]): Feed {
     const feed = new Feed({
       title: `Nostr RSS feed: ${
         (ndkUsers.map((user) => user.profile?.name)).join(", ")
@@ -47,7 +57,7 @@ class AtomRepository {
       return inputString.substring(0, 75) + " (...)";
     }
 
-    console.log(`Atom feed will have ${events.size} events`);
+    console.log(`Atom feed will have ${events.length} events`);
     for (const event of events) {
       if (event.kind === 30023) {
         //const result2 = event.tags.find(subList => subList[0] === "summary");
