@@ -2,10 +2,10 @@ import NDK from "@nostr-dev-kit/ndk";
 import * as nostr from "npm:nostr-tools";
 import { Feed } from "npm:feed";
 import { text_filter } from "./filters.ts";
-import { NDKEvent, NDKFilter, NDKUser } from "@nostr-dev-kit/ndk";
+import { NDKArticle, NDKEvent, NDKFilter, NDKUser } from "@nostr-dev-kit/ndk";
 import { Context } from "@hono/hono";
 
-export async function handleRequest(ndk: NDK, c:Context) {
+export async function handleRequest(ndk: NDK, c: Context) {
   const params = c.req;
 
   // Extract query parameters
@@ -82,7 +82,7 @@ async function fetchNostrEvents(
   const events = await ndk.fetchEvents(filter);
 
   const filteredevents = Array.from(events).filter((item) => {
-    return passes_reply(item.tags.flat(), replies) &&
+    return passes_reply(item.tags, replies) &&
       text_filter(item.content, whitelist, blacklist);
   }).sort((a, b) => b.created_at - a.created_at);
 
@@ -116,7 +116,7 @@ function createAtomFeed(events: Set<NDKEvent>, ndkUsers: NDKUser[]): Feed {
       //const result2 = event.tags.find(subList => subList[0] === "summary");
 
       feed.addItem({
-        title: getTagValue(event.tags.flat(), "title"),
+        title: NDKArticle.from(event).title,
         date: new Date(event.created_at * 1000),
         published: new Date(event.created_at * 1000),
         id: event.id,
@@ -141,21 +141,24 @@ function createAtomFeed(events: Set<NDKEvent>, ndkUsers: NDKUser[]): Feed {
 
   return feed;
 }
-function passes_reply(tags: string[], reply_allowed: boolean): boolean {
+function passes_reply(tags: string[][], reply_allowed: boolean): boolean {
   if (reply_allowed) return true;
-  else if (getTagValue(tags, "e") === "" && getTagValue(tags, "q") === "") {
+  else if (
+    getTagValue(tags, "e").length === 0 && getTagValue(tags, "q").length === 0
+  ) {
     {
+      //console.log(tags);
       return true;
     }
   } else return false;
 }
 
-function getTagValue(tags: string[], key: string): string {
+function getTagValue(tags: string[][], key: string): string[] {
   const result = tags.find((subList) => subList[0] === key);
   if (result != undefined) {
     if (result.length > 1) {
-      return result[1];
+      return result.slice(1);
     }
   }
-  return "";
+  return [];
 }
