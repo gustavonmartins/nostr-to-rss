@@ -3,8 +3,9 @@ import * as nostr from "npm:nostr-tools";
 import { Feed } from "npm:feed";
 import { text_filter } from "./filters.ts";
 import { NDKEvent, NDKFilter, NDKUser } from "@nostr-dev-kit/ndk";
+import { Context } from "@hono/hono";
 
-export async function handleRequest(ndk: NDK, c) {
+export async function handleRequest(ndk: NDK, c:Context) {
   const params = c.req;
 
   // Extract query parameters
@@ -17,7 +18,7 @@ export async function handleRequest(ndk: NDK, c) {
   //console.log(params.get("pathname"))
   //console.log(kinds);
   //console.log(userPubkeys);
-  console.log(`Query params are ${params}`);
+  console.log(`Query params are ${params.url}`);
 
   const nip05_separator = ".";
 
