@@ -57,6 +57,12 @@ class AtomRepository {
     function resumeString(inputString: string): string {
       return inputString.substring(0, 75) + " (...)";
     }
+    function resumenpub(npub: string): string {
+      const firstPart = npub.slice(0, 8);
+      const lastPart = npub.slice(-4);
+
+      return `${firstPart}...${lastPart}`;
+    }
 
     console.log(`Atom feed will have ${events.length} events`);
     for (const event of events) {
@@ -70,7 +76,7 @@ class AtomRepository {
           id: event.id,
           link: `https://njump.me/${event.id}`,
           content: event.content,
-          author: [{ name: nostr.nip19.npubEncode(event.pubkey) }],
+          author: [{ name: resumenpub(nostr.nip19.npubEncode(event.pubkey)) }],
         });
       } else {
         //const result2 = event.tags.find(subList => subList[0] === "summary");
@@ -82,7 +88,7 @@ class AtomRepository {
           id: event.id,
           link: `https://njump.me/${event.id}`,
           content: event.content,
-          author: [{ name: nostr.nip19.npubEncode(event.pubkey) }],
+          author: [{ name: resumenpub(nostr.nip19.npubEncode(event.pubkey)) }],
         });
       }
     }
