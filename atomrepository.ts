@@ -49,7 +49,7 @@ class AtomRepository {
       id: "github.com/gustavonmartins/nostr-to-rss",
       link: "github.com/gustavonmartins/nostr-to-rss",
       updated: new Date(),
-      ttl: 60,
+      ttl: 1440,
       copyright:
         "https://njump.me/npub1auwq2edy2tahk58uepwyvjjmdvkxdvmrv492xts8m2s030gla0msruxp7s",
     });
