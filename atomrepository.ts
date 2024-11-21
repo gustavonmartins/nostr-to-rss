@@ -58,7 +58,7 @@ class AtomRepository {
       return inputString.substring(0, 75) + " (...)";
     }
     function resumenpub(npub: string): string {
-      const firstPart = npub.slice(0, 8);
+      const firstPart = npub.slice(4, 8);
       const lastPart = npub.slice(-4);
 
       return `${firstPart}...${lastPart}`;
