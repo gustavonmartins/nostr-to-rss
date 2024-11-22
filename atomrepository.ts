@@ -61,7 +61,7 @@ class AtomRepository {
       const firstPart = npub.slice(4, 8);
       const lastPart = npub.slice(-4);
 
-      return `${firstPart}...${lastPart}`;
+      return `${firstPart}:${lastPart}`;
     }
 
     console.log(`Atom feed will have ${events.length} events`);
