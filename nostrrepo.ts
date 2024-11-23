@@ -19,9 +19,18 @@ class NostrRepository {
     let subscribedToUsers: string[] = [];
 
     if (filter.listownerid !== undefined) {
+      //Gets pubkey if userid is a nip05
+      const nip05_separator = ".";
+      let userpubkey: string;
+      if (filter.listownerid.includes(nip05_separator)) {
+        userpubkey =
+          (await this.ndk.getUserFromNip05(filter.listownerid)).pubkey;
+      } else if (filter.listownerid.startsWith("npub")) {
+        userpubkey = this.ndk.getUser({ npub: filter.listownerid }).pubkey;
+      }
       const userListEvent: NDKEvent = await this.ndk.fetchEvent({
-        kinds: [3],
-        authors: [this.ndk.getUser({ npub: filter.listownerid }).pubkey],
+        kinds: [3, 30023],
+        authors: [userpubkey],
       });
       subscribedToUsers = getTagsMultiple(userListEvent.tags, "p").flat();
       console.log(
