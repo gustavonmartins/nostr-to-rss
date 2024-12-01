@@ -3,7 +3,8 @@ import { passes_reply, text_filter } from "./filters.ts";
 import { getTagsMultiple } from "./utils.ts";
 
 class NostrRepository {
-  private ndk: NDK;
+  //TODO: Make private. its public just for dummy opml repo
+  public ndk: NDK;
 
   constructor(ndk: NDK) {
     this.ndk = ndk;
@@ -16,27 +17,8 @@ class NostrRepository {
     // Create a filter
     console.log(`nostr repo: filter is: ${filter.listownerid}`);
 
-    let subscribedToUsers: string[] = [];
-
-    if (filter.listownerid !== undefined) {
-      //Gets pubkey if userid is a nip05
-      const nip05_separator = ".";
-      let userpubkey: string;
-      if (filter.listownerid.includes(nip05_separator)) {
-        userpubkey =
-          (await this.ndk.getUserFromNip05(filter.listownerid)).pubkey;
-      } else if (filter.listownerid.startsWith("npub")) {
-        userpubkey = this.ndk.getUser({ npub: filter.listownerid }).pubkey;
-      }
-      const userListEvent: NDKEvent = await this.ndk.fetchEvent({
-        kinds: [3, 30023],
-        authors: [userpubkey],
-      });
-      subscribedToUsers = getTagsMultiple(userListEvent.tags, "p").flat();
-      console.log(
-        `NOST REPO: LIst subscribe to ${subscribedToUsers.length} users`,
-      );
-    }
+    const subscribedToUsers: string[] =
+      await (this.getSubscriptionsOf(filter.listownerid));
 
     const ndkfilter: NDKFilter = {
       kinds: [1, 30023],
@@ -80,6 +62,29 @@ class NostrRepository {
     );
 
     return new Set(filteredevents);
+  }
+
+  async getSubscriptionsOf(listownerid: string) {
+    let subscribedToUsers: string[] = [];
+    if (listownerid !== undefined) {
+      //Gets pubkey if userid is a nip05
+      const nip05_separator = ".";
+      let userpubkey: string;
+      if (listownerid.includes(nip05_separator)) {
+        userpubkey = (await this.ndk.getUserFromNip05(listownerid)).pubkey;
+      } else if (listownerid.startsWith("npub")) {
+        userpubkey = this.ndk.getUser({ npub: listownerid }).pubkey;
+      }
+      const userListEvent: NDKEvent = await this.ndk.fetchEvent({
+        kinds: [3, 30023],
+        authors: [userpubkey],
+      });
+      subscribedToUsers = getTagsMultiple(userListEvent.tags, "p").flat();
+      console.log(
+        `NOST REPO: LIst subscribe to ${subscribedToUsers.length} users`,
+      );
+    }
+    return subscribedToUsers;
   }
 }
 

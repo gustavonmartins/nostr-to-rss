@@ -1,21 +1,60 @@
 {
   "version": "4",
   "specifiers": {
-    "jsr:@hono/hono@*": "4.6.10",
-    "jsr:@hono/hono@^4.6.10": "4.6.10",
+    "jsr:@hono/hono@*": "4.6.11",
+    "jsr:@hono/hono@^4.6.11": "4.6.11",
+    "jsr:@libs/typing@3": "3.1.1",
+    "jsr:@libs/xml@^6.0.1": "6.0.1",
+    "jsr:@nostr/tools@^2.10.4": "2.10.4",
     "jsr:@std/assert@^1.0.8": "1.0.8",
+    "jsr:@std/cli@^1.0.6": "1.0.6",
+    "jsr:@std/encoding@^1.0.5": "1.0.5",
+    "jsr:@std/fmt@^1.0.3": "1.0.3",
+    "jsr:@std/html@^1.0.3": "1.0.3",
+    "jsr:@std/http@^1.0.11": "1.0.11",
     "jsr:@std/internal@^1.0.5": "1.0.5",
-    "npm:@nostr-dev-kit/ndk@^2.10.5": "2.10.5",
-    "npm:@types/node@^22.8.6": "22.8.6",
-    "npm:feed@*": "4.2.2",
+    "jsr:@std/media-types@^1.1.0": "1.1.0",
+    "jsr:@std/net@^1.0.4": "1.0.4",
+    "jsr:@std/path@^1.0.8": "1.0.8",
+    "jsr:@std/streams@^1.0.8": "1.0.8",
+    "npm:@noble/ciphers@~0.5.1": "0.5.3",
+    "npm:@noble/curves@1.2.0": "1.2.0",
+    "npm:@noble/hashes@1.3.1": "1.3.1",
+    "npm:@nostr-dev-kit/ndk@^2.10.7": "2.10.7",
+    "npm:@scure/base@1.1.1": "1.1.1",
+    "npm:@scure/bip32@1.3.1": "1.3.1",
+    "npm:@scure/bip39@1.2.1": "1.2.1",
     "npm:feed@^4.2.2": "4.2.2",
     "npm:nostr-dev-kit@*": "0.0.3",
-    "npm:nostr-tools@*": "2.10.1",
-    "npm:nostr-tools@^2.10.1": "2.10.1"
+    "npm:nostr-tools@*": "2.10.3",
+    "npm:nostr-tools@^2.10.3": "2.10.3",
+    "npm:nostr-wasm@0.1.0": "0.1.0",
+    "npm:xml2js@~0.6.2": "0.6.2"
   },
   "jsr": {
-    "@hono/hono@4.6.10": {
-      "integrity": "dae93ac8bb49881f99506aa8e01e5536d5d72cc3c2b556bde2816fdf25ca609c"
+    "@hono/hono@4.6.11": {
+      "integrity": "07399d911f09e94b7dc1e0e0a0577d35fe66578af20163d513958364c4e9e702"
+    },
+    "@libs/typing@3.1.1": {
+      "integrity": "02a3b0e19d917c66f484b6a3d991e820880257bdf8939ff3f5708b7dab2da77d"
+    },
+    "@libs/xml@6.0.1": {
+      "integrity": "64af4f93464c77c3e1158fb97c3657779ca554b14f38616b96cde31e22d8a309",
+      "dependencies": [
+        "jsr:@libs/typing"
+      ]
+    },
+    "@nostr/tools@2.10.4": {
+      "integrity": "7fda015c96b4f674727843aecb990e2af1989e4724588415ccf6f69066abfd4f",
+      "dependencies": [
+        "npm:@noble/ciphers",
+        "npm:@noble/curves",
+        "npm:@noble/hashes",
+        "npm:@scure/base",
+        "npm:@scure/bip32",
+        "npm:@scure/bip39",
+        "npm:nostr-wasm"
+      ]
     },
     "@std/assert@1.0.8": {
       "integrity": "ebe0bd7eb488ee39686f77003992f389a06c3da1bbd8022184804852b2fa641b",
@@ -23,8 +62,45 @@
         "jsr:@std/internal"
       ]
     },
+    "@std/cli@1.0.6": {
+      "integrity": "d22d8b38c66c666d7ad1f2a66c5b122da1704f985d3c47f01129f05abb6c5d3d"
+    },
+    "@std/encoding@1.0.5": {
+      "integrity": "ecf363d4fc25bd85bd915ff6733a7e79b67e0e7806334af15f4645c569fefc04"
+    },
+    "@std/fmt@1.0.3": {
+      "integrity": "97765c16aa32245ff4e2204ecf7d8562496a3cb8592340a80e7e554e0bb9149f"
+    },
+    "@std/html@1.0.3": {
+      "integrity": "7a0ac35e050431fb49d44e61c8b8aac1ebd55937e0dc9ec6409aa4bab39a7988"
+    },
+    "@std/http@1.0.11": {
+      "integrity": "f1928e69e7dcf1664e22d153934cb866bf31e1bbe4bc59f8ac1b4d0e98cb7558",
+      "dependencies": [
+        "jsr:@std/cli",
+        "jsr:@std/encoding",
+        "jsr:@std/fmt",
+        "jsr:@std/html",
+        "jsr:@std/media-types",
+        "jsr:@std/net",
+        "jsr:@std/path",
+        "jsr:@std/streams"
+      ]
+    },
     "@std/internal@1.0.5": {
       "integrity": "54a546004f769c1ac9e025abd15a76b6671ddc9687e2313b67376125650dc7ba"
+    },
+    "@std/media-types@1.1.0": {
+      "integrity": "c9d093f0c05c3512932b330e3cc1fe1d627b301db33a4c2c2185c02471d6eaa4"
+    },
+    "@std/net@1.0.4": {
+      "integrity": "2f403b455ebbccf83d8a027d29c5a9e3a2452fea39bb2da7f2c04af09c8bc852"
+    },
+    "@std/path@1.0.8": {
+      "integrity": "548fa456bb6a04d3c1a1e7477986b6cffbce95102d0bb447c67c4ee70e0364be"
+    },
+    "@std/streams@1.0.8": {
+      "integrity": "b41332d93d2cf6a82fe4ac2153b930adf1a859392931e2a19d9fabfb6f154fb3"
     }
   },
   "npm": {
@@ -46,10 +122,10 @@
         "@noble/hashes@1.3.2"
       ]
     },
-    "@noble/curves@1.6.0": {
-      "integrity": "sha512-TlaHRXDehJuRNR9TfZDNQ45mMEd5dwUwmicsafcIX4SsNiqnCHKjE/1alYPd/lDRVhxdhUAlv8uEhMCI5zjIJQ==",
+    "@noble/curves@1.7.0": {
+      "integrity": "sha512-UTMhXK9SeDhFJVrHeUJ5uZlI6ajXg10O6Ddocf9S6GjbSBVZsJo88HzKwXznNfGpMTRDyJkqMjNDPYgf0qFWnw==",
       "dependencies": [
-        "@noble/hashes@1.5.0"
+        "@noble/hashes@1.6.0"
       ]
     },
     "@noble/hashes@1.3.1": {
@@ -58,22 +134,22 @@
     "@noble/hashes@1.3.2": {
       "integrity": "sha512-MVC8EAQp7MvEcm30KWENFjgR+Mkmf+D189XJTkFIlwohU5hcBbn1ZkKq7KVTi2Hme3PMGF390DaL52beVrIihQ=="
     },
-    "@noble/hashes@1.5.0": {
-      "integrity": "sha512-1j6kQFb7QRru7eKN3ZDvRcP13rugwdxZqCjbiAVZfIJwgj2A65UmT4TgARXGlXgnRkORLTDTrO19ZErt7+QXgA=="
+    "@noble/hashes@1.6.0": {
+      "integrity": "sha512-YUULf0Uk4/mAA89w+k3+yUYh6NrEvxZa5T6SY3wlMvE2chHkxFUUIDI8/XW1QSC357iA5pSnqt7XEhvFOqmDyQ=="
     },
     "@noble/secp256k1@2.1.0": {
       "integrity": "sha512-XLEQQNdablO0XZOIniFQimiXsZDNwaYgL96dZwC54Q30imSbAOFf3NKtepc+cXyuZf5Q1HCgbqgZ2UFFuHVcEw=="
     },
-    "@nostr-dev-kit/ndk@2.10.5": {
-      "integrity": "sha512-QEnarJL9BGCxeenSIE9jxNSDyYQYjzD30YL3sVJ9cNybNZX8tl/I1/vhEUeRRMBz/qjROLtt0M2RV68rZ205tg==",
+    "@nostr-dev-kit/ndk@2.10.7": {
+      "integrity": "sha512-cylva8jsaAGMijxAI32CnJWlzvwD4sWyl86/+RMS6xpZn4MIgeVUfBFc/pYkcfZzDP3v1Z9mIPsuiICRyvu9yQ==",
       "dependencies": [
-        "@noble/curves@1.6.0",
-        "@noble/hashes@1.5.0",
+        "@noble/curves@1.7.0",
+        "@noble/hashes@1.6.0",
         "@noble/secp256k1",
         "@scure/base@1.1.9",
         "debug@4.3.7",
         "light-bolt11-decoder",
-        "nostr-tools@2.10.1",
+        "nostr-tools@2.10.3",
         "tseep",
         "typescript-lru-cache",
         "utf8-buffer",
@@ -99,12 +175,6 @@
       "dependencies": [
         "@noble/hashes@1.3.2",
         "@scure/base@1.1.9"
-      ]
-    },
-    "@types/node@22.8.6": {
-      "integrity": "sha512-tosuJYKrIqjQIlVCM4PEGxOmyg3FCPa/fViuJChnGeEIhjA46oy8FMVoF9su1/v8PNs2a8Q0iFNyOx0uOF91nw==",
-      "dependencies": [
-        "undici-types"
       ]
     },
     "bufferutil@4.0.8": {
@@ -257,8 +327,8 @@
         "@scure/bip39"
       ]
     },
-    "nostr-tools@2.10.1": {
-      "integrity": "sha512-fnAxLi92UgyMAEw4fMEhDKzH53uBJ0WkkVPTNfX0b3bspeWWn0n5tDZtKRJbvW0wAGOPmU6LYWi/IKPOsq3p2Q==",
+    "nostr-tools@2.10.3": {
+      "integrity": "sha512-XL+eX/kyXNoCdtgEFFT26YlGaMq/eUMaxlGWVyR8lqdDvSa9m8rrHRUiR8IYZWwq5B0534E8VXbiSuoUgGGIDw==",
       "dependencies": [
         "@noble/ciphers@0.5.3",
         "@noble/curves@1.2.0",
@@ -292,9 +362,6 @@
     },
     "typescript-lru-cache@2.0.0": {
       "integrity": "sha512-Jp57Qyy8wXeMkdNuZiglE6v2Cypg13eDA1chHwDG6kq51X7gk4K7P7HaDdzZKCxkegXkVHNcPD0n5aW6OZH3aA=="
-    },
-    "undici-types@6.19.8": {
-      "integrity": "sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw=="
     },
     "utf-8-validate@5.0.10": {
       "integrity": "sha512-Z6czzLq4u8fPOyx7TU6X3dvUZVvoJmxSQ+IcrlmagKhilxlhZgxPK6C5Jqbkw1IDUmFTM+cz9QDnnLTwDz/2gQ==",
@@ -331,6 +398,16 @@
       "dependencies": [
         "sax"
       ]
+    },
+    "xml2js@0.6.2": {
+      "integrity": "sha512-T4rieHaC1EXcES0Kxxj4JWgaUQHDk+qwHcYOCFHfiwKz7tOVPLq7Hjq9dM1WCMhylqMEfP7hMcOIChvotiZegA==",
+      "dependencies": [
+        "sax",
+        "xmlbuilder"
+      ]
+    },
+    "xmlbuilder@11.0.1": {
+      "integrity": "sha512-fDlsI/kFEx7gLvbecc0/ohLG50fugQp8ryHzMTuW9vSa1GJ0XYWKnhsUx7oie3G98+r56aTQIUB4kht42R3JvA=="
     },
     "yaeti@0.0.6": {
       "integrity": "sha512-MvQa//+KcZCUkBTIC9blM+CU9J2GzuTytsOUwf2lidtvkx/6gnEp1QvJv34t9vdjhFmha/mUiNDbN0D0mJWdug=="
@@ -411,12 +488,14 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@hono/hono@^4.6.10",
+      "jsr:@hono/hono@^4.6.11",
+      "jsr:@libs/xml@^6.0.1",
+      "jsr:@nostr/tools@^2.10.4",
       "jsr:@std/assert@^1.0.8",
-      "npm:@nostr-dev-kit/ndk@^2.10.5",
-      "npm:@types/node@^22.8.6",
+      "jsr:@std/http@^1.0.11",
+      "npm:@nostr-dev-kit/ndk@^2.10.7",
       "npm:feed@^4.2.2",
-      "npm:nostr-tools@^2.10.1"
+      "npm:xml2js@~0.6.2"
     ]
   }
 }

@@ -1,20 +1,14 @@
 {
   "license": "AGPL-3.0-only",
   "tasks": {
-    "dev": "deno run --watch main.ts"
-  },
-  "imports": {
-    "@hono/hono": "jsr:@hono/hono@^4.6.10",
-    "@nostr-dev-kit/ndk": "npm:@nostr-dev-kit/ndk@^2.10.5",
-    "@std/assert": "jsr:@std/assert@^1.0.8",
-    "@types/node": "npm:@types/node@^22.8.6",
-    "feed": "npm:feed@^4.2.2",
-    "nostr-tools": "npm:nostr-tools@^2.10.1"
+    "start": "deno run --allow-net --watch main.ts"
   },
   "compilerOptions": {
     "noImplicitAny": false,
     "strictNullChecks": false,
-    "strictFunctionTypes": false
+    "strictFunctionTypes": false,
+    "jsx": "precompile",
+    "jsxImportSource": "hono/jsx"
   },
   "deploy": {
     "project": "f725f80e-32c4-40c7-9e54-88c413b117b1",
@@ -23,5 +17,15 @@
     ],
     "include": [],
     "entrypoint": "main.ts"
+  },
+  "imports": {
+    "@nostr/tools": "jsr:@nostr/tools@^2.10.4",
+    "hono": "jsr:@hono/hono@^4.6.11",
+    "@libs/xml": "jsr:@libs/xml@^6.0.1",
+    "@nostr-dev-kit/ndk": "npm:@nostr-dev-kit/ndk@^2.10.7",
+    "@std/assert": "jsr:@std/assert@^1.0.8",
+    "@std/http": "jsr:@std/http@^1.0.11",
+    "feed": "npm:feed@^4.2.2",
+    "xml2js": "npm:xml2js@^0.6.2"
   }
 }
