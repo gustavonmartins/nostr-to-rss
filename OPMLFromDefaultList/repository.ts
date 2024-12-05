@@ -34,7 +34,7 @@ class OPMLRepository {
         $: {
           description: userName,
           encoding: "UTF-8",
-          text: "AG text",
+          text: userName,
           type: "rss",
           version: "ATOM",
           xmlUrl:
