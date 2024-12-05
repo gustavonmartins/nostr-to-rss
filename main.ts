@@ -9,7 +9,6 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 */
-import { serve } from "https://deno.land/std@0.181.0/http/server.ts";
 
 import NDK from "@nostr-dev-kit/ndk";
 
@@ -19,6 +18,8 @@ import { handleRequest } from "./feedcontroller.ts";
 import { getFeedFromDefaultList } from "./feedFromUserList/controller.ts";
 import { AtomRepository } from "./atomrepository.ts";
 import { NostrRepository } from "./nostrrepo.ts";
+import { getOPMLFromDefaultList } from "./OPMLFromDefaultList/controller.ts";
+import { OPMLRepository } from "./OPMLFromDefaultList/repository.ts";
 
 const relays = [
   "wss://nostr.mom",
@@ -39,6 +40,7 @@ const app = new Hono({ strict: false });
 
 const nostrRepo = new NostrRepository(ndk);
 const atomRepository = new AtomRepository(nostrRepo);
+const opmlRepository = new OPMLRepository(nostrRepo);
 
 app.get("/feed", async (c) => await handleRequest(ndk, c));
 app.get("/", (c) => {
@@ -65,7 +67,12 @@ app.get(
   async (c) => await getFeedFromDefaultList(atomRepository, c),
 );
 
-serve(app.fetch);
+app.get(
+  "/api/v1/opml/user/:userid/defaultlist",
+  async (c) => await getOPMLFromDefaultList(opmlRepository, c),
+);
+
+Deno.serve(app.fetch);
 export default app;
 
 console.log("Server running on http://localhost:8000");

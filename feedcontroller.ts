@@ -1,7 +1,7 @@
 import NDK from "@nostr-dev-kit/ndk";
 
 import { NDKFilter } from "@nostr-dev-kit/ndk";
-import { Context } from "@hono/hono";
+import { Context } from "hono";
 import { AtomRepository } from "./atomrepository.ts";
 import { NostrRepository } from "./nostrrepo.ts";
 

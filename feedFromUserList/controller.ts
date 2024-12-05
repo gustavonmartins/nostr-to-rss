@@ -1,4 +1,4 @@
-import { Context } from "@hono/hono";
+import { Context } from "hono";
 import { AtomRepository } from "../atomrepository.ts";
 import { Feed } from "feed";
 
