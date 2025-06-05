@@ -25,6 +25,8 @@ It allows you to:
    whitelist=veg,cook,recipe
 4. Usually, only notes and long articles are read. If you want more, you can
    change it via the option "kinds=kind1,kind2,kind3,...)
+   
+
 
 A full example:
 https://nostr-to-rss.deno.dev/feed?users=mike@mikedilger.com,isolabellart@getalby.com,npub1gcxzte5zlkncx26j68ez60fzkvtkm9e0vrwdcvsjakxf9mu9qewqlfnj5z&replies=false&whitelist=veg,cook,recipe
@@ -32,3 +34,10 @@ https://nostr-to-rss.deno.dev/feed?users=mike@mikedilger.com,isolabellart@getalb
 Another example, getting the profile of an user:
 https://nostr-to-rss.deno.dev/feed?users=mike@mikedilger.com&kinds=0 (gets the
 profile info of this user)
+
+HOW TO:
+
+1. Download an index of all of your follows (in OPML format):
+https://nostr-to-rss.deno.dev/api/v1/opml/user/:userid/defaultlist
+   Example:
+   https://nostr-to-rss.deno.dev/api/v1/opml/user/namosca@gleasonator.dev/defaultlist?replies=false&blacklist=btc,bitcoin
