@@ -37,7 +37,7 @@ profile info of this user)
 
 HOW TO:
 
-1. Download an index of all of your follows (in OPML format):
+1. Download an index of all of your follows (in OPML format), which you can later import into an RSS reader to have one subscription per person:
 https://nostr-to-rss.deno.dev/api/v1/opml/user/:userid/defaultlist
    Example:
    https://nostr-to-rss.deno.dev/api/v1/opml/user/namosca@gleasonator.dev/defaultlist?replies=false&blacklist=btc,bitcoin
