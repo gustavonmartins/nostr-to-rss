@@ -1,11 +1,11 @@
 {
-  "version": "4",
+  "version": "5",
   "specifiers": {
     "jsr:@hono/hono@*": "4.6.11",
     "jsr:@hono/hono@^4.6.11": "4.6.11",
     "jsr:@libs/typing@3": "3.1.1",
     "jsr:@libs/xml@^6.0.1": "6.0.1",
-    "jsr:@nostr/tools@^2.10.4": "2.10.4",
+    "jsr:@std/assert@*": "1.0.8",
     "jsr:@std/assert@^1.0.8": "1.0.8",
     "jsr:@std/cli@^1.0.6": "1.0.6",
     "jsr:@std/encoding@^1.0.5": "1.0.5",
@@ -20,15 +20,16 @@
     "npm:@noble/ciphers@~0.5.1": "0.5.3",
     "npm:@noble/curves@1.2.0": "1.2.0",
     "npm:@noble/hashes@1.3.1": "1.3.1",
-    "npm:@nostr-dev-kit/ndk@^2.10.7": "2.10.7",
+    "npm:@nostr-dev-kit/ndk@^2.14.29": "2.14.29_nostr-tools@2.14.2",
     "npm:@scure/base@1.1.1": "1.1.1",
     "npm:@scure/bip32@1.3.1": "1.3.1",
     "npm:@scure/bip39@1.2.1": "1.2.1",
     "npm:feed@^4.2.2": "4.2.2",
     "npm:nostr-dev-kit@*": "0.0.3",
-    "npm:nostr-tools@*": "2.10.3",
-    "npm:nostr-tools@^2.10.3": "2.10.3",
+    "npm:nostr-tools@*": "2.15.0",
+    "npm:nostr-tools@^2.15.0": "2.15.0",
     "npm:nostr-wasm@0.1.0": "0.1.0",
+    "npm:xml2js@*": "0.6.2",
     "npm:xml2js@~0.6.2": "0.6.2"
   },
   "jsr": {
@@ -42,18 +43,6 @@
       "integrity": "64af4f93464c77c3e1158fb97c3657779ca554b14f38616b96cde31e22d8a309",
       "dependencies": [
         "jsr:@libs/typing"
-      ]
-    },
-    "@nostr/tools@2.10.4": {
-      "integrity": "7fda015c96b4f674727843aecb990e2af1989e4724588415ccf6f69066abfd4f",
-      "dependencies": [
-        "npm:@noble/ciphers",
-        "npm:@noble/curves",
-        "npm:@noble/hashes",
-        "npm:@scure/base",
-        "npm:@scure/bip32",
-        "npm:@scure/bip39",
-        "npm:nostr-wasm"
       ]
     },
     "@std/assert@1.0.8": {
@@ -122,10 +111,10 @@
         "@noble/hashes@1.3.2"
       ]
     },
-    "@noble/curves@1.7.0": {
-      "integrity": "sha512-UTMhXK9SeDhFJVrHeUJ5uZlI6ajXg10O6Ddocf9S6GjbSBVZsJo88HzKwXznNfGpMTRDyJkqMjNDPYgf0qFWnw==",
+    "@noble/curves@1.9.2": {
+      "integrity": "sha512-HxngEd2XUcg9xi20JkwlLCtYwfoFw4JGkuZpT+WlsPD4gB/cxkvTD8fSsoAnphGZhFdZYKeQIPCuFlWPm1uE0g==",
       "dependencies": [
-        "@noble/hashes@1.6.0"
+        "@noble/hashes@1.8.0"
       ]
     },
     "@noble/hashes@1.3.1": {
@@ -134,26 +123,24 @@
     "@noble/hashes@1.3.2": {
       "integrity": "sha512-MVC8EAQp7MvEcm30KWENFjgR+Mkmf+D189XJTkFIlwohU5hcBbn1ZkKq7KVTi2Hme3PMGF390DaL52beVrIihQ=="
     },
-    "@noble/hashes@1.6.0": {
-      "integrity": "sha512-YUULf0Uk4/mAA89w+k3+yUYh6NrEvxZa5T6SY3wlMvE2chHkxFUUIDI8/XW1QSC357iA5pSnqt7XEhvFOqmDyQ=="
+    "@noble/hashes@1.8.0": {
+      "integrity": "sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A=="
     },
-    "@noble/secp256k1@2.1.0": {
-      "integrity": "sha512-XLEQQNdablO0XZOIniFQimiXsZDNwaYgL96dZwC54Q30imSbAOFf3NKtepc+cXyuZf5Q1HCgbqgZ2UFFuHVcEw=="
+    "@noble/secp256k1@2.3.0": {
+      "integrity": "sha512-0TQed2gcBbIrh7Ccyw+y/uZQvbJwm7Ao4scBUxqpBCcsOlZG0O4KGfjtNAy/li4W8n1xt3dxrwJ0beZ2h2G6Kw=="
     },
-    "@nostr-dev-kit/ndk@2.10.7": {
-      "integrity": "sha512-cylva8jsaAGMijxAI32CnJWlzvwD4sWyl86/+RMS6xpZn4MIgeVUfBFc/pYkcfZzDP3v1Z9mIPsuiICRyvu9yQ==",
+    "@nostr-dev-kit/ndk@2.14.29_nostr-tools@2.14.2": {
+      "integrity": "sha512-qgep+P7+50lmSDaBxEufarpkx5s3YiI571xjxX2ErC4YAkGK2HmilgqQS0v6yjF1/o0k4UyLfl/wyEeaZCwazg==",
       "dependencies": [
-        "@noble/curves@1.7.0",
-        "@noble/hashes@1.6.0",
+        "@noble/curves@1.9.2",
+        "@noble/hashes@1.8.0",
         "@noble/secp256k1",
         "@scure/base@1.1.9",
-        "debug@4.3.7",
+        "debug@4.4.1",
         "light-bolt11-decoder",
-        "nostr-tools@2.10.3",
+        "nostr-tools@2.14.2",
         "tseep",
-        "typescript-lru-cache",
-        "utf8-buffer",
-        "websocket-polyfill"
+        "typescript-lru-cache"
       ]
     },
     "@scure/base@1.1.1": {
@@ -181,7 +168,8 @@
       "integrity": "sha512-4T53u4PdgsXqKaIctwF8ifXlRTTmEPJ8iEPWFdGZvcf7sbwYo6FKFEX9eNNAnzFZ7EzJAQ3CJeOtCRA4rDp7Pw==",
       "dependencies": [
         "node-gyp-build"
-      ]
+      ],
+      "scripts": true
     },
     "d@1.0.2": {
       "integrity": "sha512-MOqHvMWF9/9MX6nza0KgvFH4HpMU0EF5uUDXqX/BtxtU8NfB0QzRtJ8Oe/6SuS4kbhyzVJwjd97EA4PKrzJ8bw==",
@@ -199,8 +187,8 @@
         "ms@2.0.0"
       ]
     },
-    "debug@4.3.7": {
-      "integrity": "sha512-Er2nc/H7RrMXZBFCEim6TCmMk02Z8vLC2Rbi1KEBggpo0fS6l0S1nnapwmIi3yW/+GOJap1Krg4w0Hg80oCqgQ==",
+    "debug@4.4.1": {
+      "integrity": "sha512-KcKCqiftBJcZr++7ykoDIEwSa3XWowTfNPo92BYxjXiyYEVrUQh2aLyhxBCwww+heortUFxEJYcRzosstTEBYQ==",
       "dependencies": [
         "ms@2.1.3"
       ]
@@ -212,7 +200,8 @@
         "es6-symbol",
         "esniff",
         "next-tick"
-      ]
+      ],
+      "scripts": true
     },
     "es6-iterator@2.0.3": {
       "integrity": "sha512-zw4SRzoUkd+cl+ZoE15A9o1oQd920Bb0iOJMQkQhl3jNc03YqVjAhG7scf9C5KWRU/R13Orf588uCC6525o02g==",
@@ -292,7 +281,8 @@
       "integrity": "sha512-CXdUiJembsNjuToQvxayPZF9Vqht7hewsvy2sOWafLvi2awflj9mOC6bHIg50orX8IJvWKY9wYQ/zB2kogPslQ=="
     },
     "node-domexception@1.0.0": {
-      "integrity": "sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ=="
+      "integrity": "sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==",
+      "deprecated": true
     },
     "node-fetch@3.3.2": {
       "integrity": "sha512-dRB78srN/l6gqWulah9SrxeYnxeddIG30+GOqK/9OlLVyLg3HPnr6SqOWTWOXKRwC2eGYCkZ59NNuSgvSrpgOA==",
@@ -303,7 +293,8 @@
       ]
     },
     "node-gyp-build@4.8.2": {
-      "integrity": "sha512-IRUxE4BVsHWXkV/SFOut4qTlagw2aM8T5/vnTsmrHJvVoKueJHRc/JaFND7QDDc61kLYUJ6qlZM3sqTSyx2dTw=="
+      "integrity": "sha512-IRUxE4BVsHWXkV/SFOut4qTlagw2aM8T5/vnTsmrHJvVoKueJHRc/JaFND7QDDc61kLYUJ6qlZM3sqTSyx2dTw==",
+      "bin": true
     },
     "nostr-dev-kit@0.0.3": {
       "integrity": "sha512-PHFjQCEaZQsFm89jS/IAoC+gt06JnNVy1S1kMO9x6zxE6SJMhQL/Ggc3lRzY8vyzo47qbMEVs/cit1/hv4DU6A==",
@@ -327,8 +318,20 @@
         "@scure/bip39"
       ]
     },
-    "nostr-tools@2.10.3": {
-      "integrity": "sha512-XL+eX/kyXNoCdtgEFFT26YlGaMq/eUMaxlGWVyR8lqdDvSa9m8rrHRUiR8IYZWwq5B0534E8VXbiSuoUgGGIDw==",
+    "nostr-tools@2.14.2": {
+      "integrity": "sha512-YOIOn5EdJ2Kq5sQW5Zh4wOcqzR6kUyrCDHG4+mVD2szzthsyOTpiWX0yrwaRZGlHJG6q83vkhg95qc2W201XTQ==",
+      "dependencies": [
+        "@noble/ciphers@0.5.3",
+        "@noble/curves@1.2.0",
+        "@noble/hashes@1.3.1",
+        "@scure/base@1.1.1",
+        "@scure/bip32",
+        "@scure/bip39",
+        "nostr-wasm"
+      ]
+    },
+    "nostr-tools@2.15.0": {
+      "integrity": "sha512-Jj/+UFbu3JbTAWP4ipPFNuyD4W5eVRBNAP+kmnoRCYp3bLmTrlQ0Qhs5O1xSQJTFpjdZqoS0zZOUKdxUdjc+pw==",
       "dependencies": [
         "@noble/ciphers@0.5.3",
         "@noble/curves@1.2.0",
@@ -367,7 +370,8 @@
       "integrity": "sha512-Z6czzLq4u8fPOyx7TU6X3dvUZVvoJmxSQ+IcrlmagKhilxlhZgxPK6C5Jqbkw1IDUmFTM+cz9QDnnLTwDz/2gQ==",
       "dependencies": [
         "node-gyp-build"
-      ]
+      ],
+      "scripts": true
     },
     "utf8-buffer@1.0.0": {
       "integrity": "sha512-ueuhzvWnp5JU5CiGSY4WdKbiN/PO2AZ/lpeLiz2l38qwdLy/cW40XobgyuIWucNyum0B33bVB0owjFCeGBSLqg=="
@@ -397,7 +401,8 @@
       "integrity": "sha512-7rVi2KMfwfWFl+GpPg6m80IVMWXLRjO+PxTq7V2CDhoGak0wzYzFgUY2m4XJ47OGdXd8eLE8EmwfAmdjw7lC1g==",
       "dependencies": [
         "sax"
-      ]
+      ],
+      "bin": true
     },
     "xml2js@0.6.2": {
       "integrity": "sha512-T4rieHaC1EXcES0Kxxj4JWgaUQHDk+qwHcYOCFHfiwKz7tOVPLq7Hjq9dM1WCMhylqMEfP7hMcOIChvotiZegA==",
@@ -410,7 +415,8 @@
       "integrity": "sha512-fDlsI/kFEx7gLvbecc0/ohLG50fugQp8ryHzMTuW9vSa1GJ0XYWKnhsUx7oie3G98+r56aTQIUB4kht42R3JvA=="
     },
     "yaeti@0.0.6": {
-      "integrity": "sha512-MvQa//+KcZCUkBTIC9blM+CU9J2GzuTytsOUwf2lidtvkx/6gnEp1QvJv34t9vdjhFmha/mUiNDbN0D0mJWdug=="
+      "integrity": "sha512-MvQa//+KcZCUkBTIC9blM+CU9J2GzuTytsOUwf2lidtvkx/6gnEp1QvJv34t9vdjhFmha/mUiNDbN0D0mJWdug==",
+      "deprecated": true
     }
   },
   "redirects": {
@@ -490,11 +496,11 @@
     "dependencies": [
       "jsr:@hono/hono@^4.6.11",
       "jsr:@libs/xml@^6.0.1",
-      "jsr:@nostr/tools@^2.10.4",
       "jsr:@std/assert@^1.0.8",
       "jsr:@std/http@^1.0.11",
-      "npm:@nostr-dev-kit/ndk@^2.10.7",
+      "npm:@nostr-dev-kit/ndk@^2.14.29",
       "npm:feed@^4.2.2",
+      "npm:nostr-tools@^2.15.0",
       "npm:xml2js@~0.6.2"
     ]
   }

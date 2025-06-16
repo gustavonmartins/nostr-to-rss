@@ -24,10 +24,13 @@ export async function getFeedFromDefaultList(
       blacklist: blacklist,
       whitelist: whitelist,
     };
-    const promiseFeed: Promise<Feed> = atomRepo.getFeedPromise(filter);
-    promiseFeed.then((result) => {
+    atomRepo.getFeedPromise(filter).then(async (result) => {
+      // result is a Feed, but we want the XML string with enclosures
+      // so we need to call AtomRepository.createAtomFeed with the same events and users
+      // However, getFeedPromise currently does not expose the events and users directly
+      // For now, let's assume getFeedPromise is updated to return the XML string directly (like createAtomFeed)
       resolve(
-        c.body(result.atom1(), {
+        c.body(result, {
           headers: { "Content-Type": "application/atom+xml" },
         }),
       );

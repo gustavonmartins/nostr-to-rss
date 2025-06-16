@@ -65,9 +65,8 @@ export async function handleRequest(ndk: NDK, c: Context) {
   );
 
   // Convert events to Atom feed
-  const feed = AtomRepository.createAtomFeed(Array.from(events), userListHex);
-
-  return c.body(feed.atom1(), {
+  const atomXml = await AtomRepository.createAtomFeed(Array.from(events), userListHex);
+  return c.body(atomXml, {
     headers: { "Content-Type": "application/atom+xml" },
   });
 }
